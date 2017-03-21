@@ -9,5 +9,8 @@ class CreateJobs < ActiveRecord::Migration[5.0]
       t.timestamp :scheduled_for
       t.timestamp :performed_at
     end
+    add_index :pg_jobs, %i(queue_name scheduled_for priority created_at),
+              where: 'performed_at IS NULL',
+              name: 'index_pg_jobs_worker'
   end
 end
