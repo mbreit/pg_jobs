@@ -1,4 +1,4 @@
-class PgJob < ApplicationRecord
+class PgJob < ActiveRecord::Base
   scope :due, -> { where('scheduled_for IS NULL OR scheduled_for <= ?', Time.current) }
   scope :unprocessed, -> { where(performed_at: nil) }
   scope :queue, ->(name) { where(queue_name: name).unprocessed.order(:priority, :created_at) }
