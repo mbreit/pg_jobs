@@ -22,7 +22,7 @@ namespace :db do
     require 'active_record'
 
     ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
-    ActiveRecord::Tasks::DatabaseTasks.migrations_paths = [File.expand_path('../db/migrate', __dir__)]
+    ActiveRecord::Tasks::DatabaseTasks.migrations_paths = [File.expand_path('db/migrate', __dir__)]
   end
 
   desc 'Create test database'
