@@ -15,3 +15,5 @@ matrix:
       env: RAILS_VERSION=5.0
     - rvm: "2.5"
       env: RAILS_VERSION=5.1
+addons:
+  postgresql: "10"
