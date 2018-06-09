@@ -44,7 +44,7 @@ module PgJobs
   #   executed. Use nil if the job should be run immediately.
   def self.enqueue(job, scheduled_for = nil)
     PgJob.create!(job_data: job.serialize,
-                  scheduled_for: scheduled_for && Time.zone.at(scheduled_for),
+                  scheduled_for: scheduled_for && Time.at(scheduled_for),
                   priority: job.priority || 100,
                   queue_name: job.queue_name || 'default')
   end
