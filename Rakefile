@@ -18,6 +18,7 @@ require 'bundler/gem_tasks'
 
 namespace :db do
   task :init do
+    require 'zlib'
     require 'active_record'
 
     ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
