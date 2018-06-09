@@ -13,4 +13,5 @@ gemspec
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
+gem 'pg'
 gem 'rails', ENV.fetch('RAILS_VERSION', '5.0')
