@@ -33,7 +33,7 @@ $ bundle
 Then copy the migrations and migrate your database:
 ```bash
 $ bin/rails railties:install:migrations
-$ bin/rails migrate
+$ bin/rails db:migrate
 ```
 
 To configure the ActiveJob adapter add this to your environment
