@@ -5,7 +5,11 @@ SKIP LOCKED.
 Supports most ActiveJob features like multiple queues, priorities
 and wait times.
 
-Needs PostgreSQL 9.5 to use SKIP LOCKED.
+## Dependencies
+
+* PostgreSQL >= 9.5 to use SKIP LOCKED
+* Ruby >= 2.3
+* Rails >= 5.1
 
 ## Usage
 Just schedule your work with ActiveJob, then run one or multiple
