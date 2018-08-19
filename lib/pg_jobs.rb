@@ -29,10 +29,22 @@ module PgJobs
   # time, it wakes up in an interval given by the timeout parameter
   # to check for jobs that became due in the meantime.
   #
+  # Handles SIGTERM for graceful shutdown. This signal will interrupt
+  # neither the execution of a job nor waiting for a new job,
+  # so a shorter timeout means a faster shutdown on SIGTERM.
+  #
   # @param queue_name [String] The name of the queue to work on
   # @param timeout [integer] Interval to check for due jobs
-  def self.work(queue_name = 'default', timeout: 10)
-    PgJob.yield_jobs(queue_name, timeout) do |pg_job|
+  # @param exit_signals [Array<String>] Array of signal names for graceful exit
+  def self.work(queue_name = 'default', timeout: 10, exit_signals: ['INT', 'TERM'])
+    exit_signal = false
+    exit_signals.each do |signal|
+      Signal.trap(signal) do
+        exit_signal = true
+      end
+    end
+
+    PgJob.yield_jobs(queue_name, timeout, -> { exit_signal }) do |pg_job|
       execute_job(pg_job)
     end
   end
