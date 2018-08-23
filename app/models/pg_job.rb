@@ -32,15 +32,22 @@ class PgJob < ActiveRecord::Base
   #
   # @param queue_name [String] The name of the queue to work on
   # @param timeout [integer] Interval to check for due jobs
-  def self.yield_jobs(queue_name, timeout, &block)
+  # @param exit_proc [proc] Proc for graceful exit. This method
+  #   will return between jobs when this proc returns a truthy value.
+  def self.yield_jobs(queue_name, timeout, exit_proc = nil, &block)
     connection.execute "LISTEN pg_jobs_#{queue_name}"
     loop do
       # Consume all pending NOTIFY events
       while connection.raw_connection.notifies; end
       # Work jobs as long as there are pending jobs in the queue
-      while yield_job(queue_name, &block); end
+      # and the exit_proc does not return a truthy value
+      while yield_job(queue_name, &block)
+        return if exit_proc&.()
+      end
       # Wait for next NOTIFY event
       connection.raw_connection.wait_for_notify(timeout)
+      # Check exit_proc again between wait_for_notify and next job execution
+      return if exit_proc&.()
     end
   ensure
     connection.execute "UNLISTEN pg_jobs_#{queue_name}"
