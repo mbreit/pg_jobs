@@ -3,7 +3,7 @@ class PgJob < ActiveRecord::Base
   scope :unprocessed, -> { where(performed_at: nil) }
   scope :queue, ->(name) { where(queue_name: name).unprocessed.order(:priority, :created_at) }
 
-  validates :queue_name, format: {with: /\A[a-zA-Z1-9_]+\z/}
+  validates :queue_name, format: {with: /\A[a-zA-Z0-9_]+\z/}
 
   after_create :notify_workers
 
