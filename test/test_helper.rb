@@ -18,10 +18,37 @@ Minitest.backtrace_filter = Minitest::BacktraceFilter.new
 
 # Configure ActiveRecord from test/database.yml
 ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
-ActiveRecord::Base.establish_connection
 
 # Require PgJobs classes and configure ActiveJob adapter
 require 'pg_job'
 require 'pg_jobs'
 require 'active_job/queue_adapters/pg_jobs_adapter'
 ActiveJob::Base.queue_adapter = :pg_jobs
+
+Rails.logger ||= Logger.new(STDOUT)
+ActiveJob::Base.logger = Rails.logger
+Rails.logger.level = ENV['DEBUG'].present? ? :debug : :warn
+
+# Require the test job and spawn a child process with the worker
+require 'test_job'
+require 'notify_job'
+require 'notify_job_helper'
+
+parent_pid = Process.pid
+
+worker_pid = fork do
+  ActiveRecord::Base.establish_connection
+  PgJobs.work("worker_#{parent_pid}", timeout: 1)
+  exit!
+end
+
+# Stop worker process after test run
+Minitest.after_run do
+  Process.kill('KILL', worker_pid)
+  Process.wait(worker_pid)
+end
+
+ActiveRecord::Base.establish_connection
+
+# Delete left over jobs from previous test runs
+PgJob.delete_all
