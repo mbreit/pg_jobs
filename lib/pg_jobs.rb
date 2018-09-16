@@ -22,6 +22,8 @@ require 'active_job/queue_adapters/pg_jobs_adapter'
 #
 # Needs PostgreSQL 9.5 to use SKIP LOCKED.
 module PgJobs
+  mattr_accessor(:logger) { Rails.logger }
+
   # Run a worker process for a given queue name.
   # Will run all scheduled jobs in the queue ordered by their
   # priorities (lowest first) and then wait for PostgreSQL LISTEN
@@ -44,6 +46,11 @@ module PgJobs
       end
     end
 
+    logger.info do
+      "[pg_jobs] [#{queue_name}] " \
+      "Starting pg_jobs worker for queue '#{queue_name}' with wait timeout #{timeout} seconds"
+    end
+
     PgJob.yield_jobs(queue_name, timeout, -> { exit_signal }) do |pg_job|
       execute_job(pg_job)
     end
@@ -63,8 +70,12 @@ module PgJobs
 
   # Execute a PgJob instance. Calls `ActiveJob::Base.execute`.
   def self.execute_job(pg_job)
+    logger.debug("pg_jobs: Executing job #{pg_job.inspect}")
     ActiveJob::Base.execute(pg_job.job_data)
   rescue => e
-    Rails.logger.error("Error while executing job: #{e}\n" + e.backtrace.join('\n'))
+    logger.error do
+      "[pg_jobs] [#{pg_job.queue_name}] [#{pg_job.job_data['job_id']}] " \
+      "Error while executing job: #{e}\n" + e.backtrace.join("\n")
+    end
   end
 end

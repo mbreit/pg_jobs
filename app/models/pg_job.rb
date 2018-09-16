@@ -32,6 +32,11 @@ class PgJob < ActiveRecord::Base
       return false unless job
 
       yield job
+
+      logger.debug do
+        "[pg_jobs] [#{queue_name}] [#{job.job_id}] Deleting finished job with id #{job.id}"
+      end
+
       job.destroy!
     end
   end
@@ -55,6 +60,7 @@ class PgJob < ActiveRecord::Base
         return if exit_proc&.()
       end
       # Wait for next NOTIFY event
+      logger.debug "[pg_jobs] [#{queue_name}] No jobs found, calling wait_for_notify(#{timeout})"
       connection.raw_connection.wait_for_notify(timeout)
       # Check exit_proc again between wait_for_notify and next job execution
       return if exit_proc&.()
@@ -66,6 +72,12 @@ class PgJob < ActiveRecord::Base
   # Notifies job workers that a new job is present using
   # PostgreSQL NOTIFIY.
   def notify_workers
+    logger.debug { "[pg_jobs] [#{queue_name}] [#{job_id}] Notify workers about new job" }
     PgJob.connection.execute "NOTIFY pg_jobs_#{queue_name}"
+  end
+
+  # Returns the Active Job job id (which is different from the PgJobs model id)
+  def job_id
+    job_data['job_id']
   end
 end
