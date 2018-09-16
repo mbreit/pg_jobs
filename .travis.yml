@@ -1,0 +1,15 @@
+sudo: false
+cache: bundler
+language: ruby
+rvm:
+  - "2.4"
+env:
+  - RAILS_VERSION=5.1
+matrix:
+  include:
+    - rvm: "2.4"
+      env: RAILS_VERSION=5.1
+    - rvm: "2.5"
+      env: RAILS_VERSION=5.2
+addons:
+  postgresql: "9.5"
