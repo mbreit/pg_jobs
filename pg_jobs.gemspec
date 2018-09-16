@@ -22,4 +22,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'pg'
 
   s.add_development_dependency 'minitest', '~> 5.9.0'
+  s.add_development_dependency 'rubocop', '~> 0.59.1'
 end
