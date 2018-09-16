@@ -4,7 +4,7 @@ language: ruby
 rvm:
   - "2.4"
 env:
-  - RAILS_VERSION=5.0
+  - RAILS_VERSION=5.1
 matrix:
   include:
     - rvm: "2.4"
