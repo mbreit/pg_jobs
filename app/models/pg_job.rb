@@ -1,3 +1,14 @@
+# ActiveRecord model for jobs
+#
+# Schema:
+#
+# | column        | type      | default   | null  |
+# |---------------|-----------|-----------|-------|
+# | job_data      | jsonb     |           | false |
+# | priority      | integer   | 100       | false |
+# | queue_name    | string    | 'default' | false |
+# | created_at    | timestamp |           | false |
+# | scheduled_for | timestamp |           | true  |
 class PgJob < ActiveRecord::Base
   scope :due, -> { where('scheduled_for IS NULL OR scheduled_for <= ?', Time.current) }
   scope :queue, ->(name) { where(queue_name: name).order(:priority, :created_at) }
