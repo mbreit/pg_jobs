@@ -17,7 +17,8 @@ module NotifyJobHelper
   end
 
   def perform_notify_job(id = name, **opts)
-    NotifyJob.set(opts.reverse_merge(queue: worker_queue_name)).perform_later(worker_queue_job_name, id)
+    NotifyJob.set(opts.reverse_merge(queue: worker_queue_name))
+             .perform_later(worker_queue_job_name, id)
   end
 
   def worker_queue_name
