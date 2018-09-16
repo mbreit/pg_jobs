@@ -1,7 +1,6 @@
 class PgJob < ActiveRecord::Base
   scope :due, -> { where('scheduled_for IS NULL OR scheduled_for <= ?', Time.current) }
-  scope :unprocessed, -> { where(performed_at: nil) }
-  scope :queue, ->(name) { where(queue_name: name).unprocessed.order(:priority, :created_at) }
+  scope :queue, ->(name) { where(queue_name: name).order(:priority, :created_at) }
 
   validates :queue_name, format: {with: /\A[a-zA-Z0-9_]+\z/}
 
@@ -21,8 +20,7 @@ class PgJob < ActiveRecord::Base
       job = queue(queue_name).due.lock('FOR UPDATE SKIP LOCKED').first
       return false unless job
       yield job
-      job.performed_at = Time.current
-      job.save(validate: false)
+      job.destroy!
     end
   end
 
