@@ -2,7 +2,7 @@ class PgJob < ActiveRecord::Base
   scope :due, -> { where('scheduled_for IS NULL OR scheduled_for <= ?', Time.current) }
   scope :queue, ->(name) { where(queue_name: name).order(:priority, :created_at) }
 
-  validates :queue_name, format: {with: /\A[a-zA-Z0-9_]+\z/}
+  validates :queue_name, format: { with: /\A[a-zA-Z0-9_]+\z/ }
 
   after_create :notify_workers
 
@@ -19,6 +19,7 @@ class PgJob < ActiveRecord::Base
     transaction do
       job = queue(queue_name).due.lock('FOR UPDATE SKIP LOCKED').first
       return false unless job
+
       yield job
       job.destroy!
     end

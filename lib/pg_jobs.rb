@@ -36,7 +36,7 @@ module PgJobs
   # @param queue_name [String] The name of the queue to work on
   # @param timeout [integer] Interval to check for due jobs
   # @param exit_signals [Array<String>] Array of signal names for graceful exit
-  def self.work(queue_name = 'default', timeout: 10, exit_signals: ['INT', 'TERM'])
+  def self.work(queue_name = 'default', timeout: 10, exit_signals: %w[INT TERM])
     exit_signal = false
     exit_signals.each do |signal|
       Signal.trap(signal) do
