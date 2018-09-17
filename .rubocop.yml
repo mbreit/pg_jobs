@@ -1,0 +1,23 @@
+AllCops:
+  TargetRubyVersion: 2.3
+
+Metrics/LineLength:
+  Max: 100
+
+Metrics/MethodLength:
+  Max: 15
+
+Style/Documentation:
+  Exclude:
+    - 'test/**/*'
+    - 'db/migrate/*'
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/RescueStandardError:
+  Exclude:
+    - 'lib/pg_jobs.rb'
+
+Style/WhileUntilModifier:
+  Enabled: false
