@@ -1,3 +1,9 @@
+[![Gem](https://img.shields.io/gem/v/pg_jobs.svg)](https://rubygems.org/gems/pg_jobs)
+[![license MIT](https://img.shields.io/github/license/mbreit/pg_jobs.svg)](https://github.com/mbreit/pg_jobs/blob/codeclimate/MIT-LICENSE)
+[![build](https://img.shields.io/travis/com/mbreit/pg_jobs.svg)](https://travis-ci.com/mbreit/pg_jobs)
+[![maintainability](https://img.shields.io/codeclimate/maintainability/mbreit/pg_jobs.svg)](https://codeclimate.com/github/mbreit/pg_jobs)
+[![coverage](https://img.shields.io/codeclimate/coverage/mbreit/pg_jobs.svg)](https://codeclimate.com/github/mbreit/pg_jobs)
+
 # PgJobs
 
 Simple ActiveJob worker for PostgreSQL using LISTEN/NOTIFY and
