@@ -35,7 +35,7 @@ bundle
 Then copy the migrations and migrate your database:
 
 ```bash
-bin/rails railties:install:migrations
+bin/rails pg_jobs_engine:install:migrations
 bin/rails db:migrate
 ```
 
