@@ -6,10 +6,10 @@
 
 # PgJobs
 
-Simple ActiveJob worker for PostgreSQL using LISTEN/NOTIFY and
+Simple Active Job worker for PostgreSQL using LISTEN/NOTIFY and
 SKIP LOCKED.
 
-Supports most ActiveJob features like multiple queues, priorities
+Supports most Active Job features like multiple queues, priorities
 and wait times.
 
 ## Dependencies
@@ -39,7 +39,7 @@ bin/rails pg_jobs_engine:install:migrations
 bin/rails db:migrate
 ```
 
-To configure the ActiveJob adapter add this to your environment
+To configure the Active Job adapter add this to your environment
 configuration (config/environments/production.rb):
 
 ```ruby
@@ -55,7 +55,7 @@ config.action_mailer.deliver_later_queue_name = 'default'
 
 ## Usage
 
-Just schedule your work with ActiveJob, then run one or multiple
+Just schedule your work with Active Job, then run one or multiple
 workers for the default queue with
 
 ```bash
@@ -68,7 +68,7 @@ or for other queues with
 bin/rails runner "PgJobs.work(:my_queue)"
 ```
 
-For more documentation about ActiveJob and how to use different queues,
+For more documentation about Active Job and how to use different queues,
 scheduled jobs, priorities and error handling, see the
 [Active Job Rails Guide](https://guides.rubyonrails.org/active_job_basics.html).
 
