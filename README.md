@@ -46,6 +46,13 @@ configuration (config/environments/production.rb):
 config.active_job.queue_adapter = :pg_jobs
 ```
 
+If you want to run all your jobs in one queue, we recommend to configure
+ActionMailer to use the `default` queue:
+
+```ruby
+config.action_mailer.deliver_later_queue_name = 'default'
+```
+
 ## Usage
 
 Just schedule your work with ActiveJob, then run one or multiple
