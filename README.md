@@ -68,6 +68,10 @@ or for other queues with
 bin/rails runner "PgJobs.work(:my_queue)"
 ```
 
+For more documentation about ActiveJob and how to use different queues,
+scheduled jobs, priorities and error handling, see the
+[Active Job Rails Guide](https://guides.rubyonrails.org/active_job_basics.html).
+
 ## Contributing
 
 Use Github issues and pull requests.
