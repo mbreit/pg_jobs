@@ -18,21 +18,6 @@ and wait times.
 * Ruby >= 2.3
 * Rails >= 5.1
 
-## Usage
-
-Just schedule your work with ActiveJob, then run one or multiple
-workers for the default queue with
-
-```bash
-bin/rails runner PgJobs.work
-```
-
-or for other queues with
-
-```bash
-bin/rails runner "PgJobs.work(:my_queue)"
-```
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -59,6 +44,21 @@ configuration (config/environments/production.rb):
 
 ```ruby
 config.active_job.queue_adapter = :pg_jobs
+```
+
+## Usage
+
+Just schedule your work with ActiveJob, then run one or multiple
+workers for the default queue with
+
+```bash
+bin/rails runner PgJobs.work
+```
+
+or for other queues with
+
+```bash
+bin/rails runner "PgJobs.work(:my_queue)"
 ```
 
 ## Contributing
