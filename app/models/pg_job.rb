@@ -33,10 +33,6 @@ class PgJob < ActiveRecord::Base
 
       yield job
 
-      logger.debug do
-        "[pg_jobs] [#{queue_name}] [#{job.job_id}] Deleting finished job with id #{job.id}"
-      end
-
       job.destroy!
     end
   end
@@ -72,7 +68,6 @@ class PgJob < ActiveRecord::Base
   # Notifies job workers that a new job is present using
   # PostgreSQL NOTIFIY.
   def notify_workers
-    logger.debug { "[pg_jobs] [#{queue_name}] [#{job_id}] Notify workers about new job" }
     PgJob.connection.execute "NOTIFY pg_jobs_#{queue_name}"
   end
 

@@ -70,7 +70,6 @@ module PgJobs
 
   # Execute a PgJob instance. Calls `ActiveJob::Base.execute`.
   def self.execute_job(pg_job)
-    logger.debug("pg_jobs: Executing job #{pg_job.inspect}")
     ActiveJob::Base.execute(pg_job.job_data)
   rescue => e
     logger.error do
