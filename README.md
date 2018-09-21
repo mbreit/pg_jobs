@@ -3,6 +3,7 @@
 [![build](https://img.shields.io/travis/com/mbreit/pg_jobs/master.svg)](https://travis-ci.com/mbreit/pg_jobs)
 [![maintainability](https://img.shields.io/codeclimate/maintainability/mbreit/pg_jobs.svg)](https://codeclimate.com/github/mbreit/pg_jobs)
 [![coverage](https://img.shields.io/codeclimate/coverage/mbreit/pg_jobs.svg)](https://codeclimate.com/github/mbreit/pg_jobs)
+[![docs](https://inch-ci.org/github/mbreit/pg_jobs.svg?branch=master)](https://inch-ci.org/github/mbreit/pg_jobs)
 
 # PgJobs
 
