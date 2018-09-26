@@ -63,9 +63,4 @@ class PgJob < ActiveRecord::Base
   def notify_workers
     PgJob.connection.execute "NOTIFY pg_jobs_#{queue_name}"
   end
-
-  # Returns the Active Job job id (which is different from the PgJobs model id)
-  def job_id
-    job_data['job_id']
-  end
 end
