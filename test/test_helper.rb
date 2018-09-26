@@ -24,10 +24,10 @@ Minitest.backtrace_filter = Minitest::BacktraceFilter.new
 ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
 
 # Set up logging
-Rails.logger ||= Logger.new(STDOUT)
+Rails.logger ||= Logger.new('test.log')
 ActiveJob::Base.logger = Rails.logger
 ActiveRecord::Base.logger = Rails.logger
-Rails.logger.level = ENV['DEBUG'].present? ? :debug : :warn
+Rails.logger.level = ENV['DEBUG'].present? ? :debug : :info
 
 # Require PgJobs classes and configure ActiveJob adapter
 require 'pg_job'
