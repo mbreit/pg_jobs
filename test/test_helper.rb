@@ -1,6 +1,10 @@
 # Configure Rails Environment
 ENV['RAILS_ENV'] = 'test'
 
+# Setup simplecov
+require 'simplecov'
+SimpleCov.start
+
 # Load Rails with ActiveJob and ActiveRecord
 require 'rails'
 require 'active_model/railtie'
@@ -39,14 +43,15 @@ require 'notify_job_helper'
 parent_pid = Process.pid
 
 worker_pid = fork do
+  SimpleCov.start
+  SimpleCov.command_name 'worker'
   ActiveRecord::Base.establish_connection
   PgJobs.work("worker_#{parent_pid}", timeout: 1)
-  exit!
 end
 
 # Stop worker process after test run
 Minitest.after_run do
-  Process.kill('KILL', worker_pid)
+  Process.kill('INT', worker_pid)
   Process.wait(worker_pid)
 end
 

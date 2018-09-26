@@ -40,8 +40,14 @@ module PgJobs
   # @param exit_signals [Array<String>] Array of signal names for graceful exit
   def self.work(queue_name = 'default', timeout: 10, exit_signals: %w[INT TERM])
     exit_signal = false
+    job_running = false
+
     exit_signals.each do |signal|
       Signal.trap(signal) do
+        raise SignalException, signal unless job_running
+
+        # Put this message to STDERR because the logger cannot be used in a trap context
+        STDERR.puts "Received signal #{signal}, waiting for current job to finish"
         exit_signal = true
       end
     end
@@ -51,8 +57,12 @@ module PgJobs
       "Starting pg_jobs worker for queue '#{queue_name}' with wait timeout #{timeout} seconds"
     end
 
-    PgJob.yield_jobs(queue_name, timeout, -> { exit_signal }) do |pg_job|
+    PgJob.yield_jobs(queue_name, timeout) do |pg_job|
+      job_running = true
       execute_job(pg_job)
+      job_running = false
+
+      break if exit_signal
     end
   end
 
