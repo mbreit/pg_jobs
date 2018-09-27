@@ -32,6 +32,7 @@ class PgJob < ActiveRecord::Base
       return false unless job
 
       yield job
+
       job.destroy!
     end
   end
@@ -50,6 +51,7 @@ class PgJob < ActiveRecord::Base
       # Work jobs as long as there are pending jobs in the queue
       while yield_job(queue_name, &block); end
       # Wait for next NOTIFY event
+      logger.debug "[pg_jobs] [#{queue_name}] No jobs found, calling wait_for_notify(#{timeout})"
       connection.raw_connection.wait_for_notify(timeout)
     end
   ensure

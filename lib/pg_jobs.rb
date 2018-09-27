@@ -50,6 +50,11 @@ module PgJobs
       end
     end
 
+    Rails.logger.info do
+      "[pg_jobs] [#{queue_name}] " \
+      "Starting pg_jobs worker for queue '#{queue_name}' with wait timeout #{timeout} seconds"
+    end
+
     PgJob.yield_jobs(queue_name, timeout) do |pg_job|
       job_running = true
       execute_job(pg_job)
@@ -75,6 +80,9 @@ module PgJobs
   def self.execute_job(pg_job)
     ActiveJob::Base.execute(pg_job.job_data)
   rescue => e
-    Rails.logger.error("Error while executing job: #{e}\n" + e.backtrace.join('\n'))
+    Rails.logger.error do
+      "[pg_jobs] [#{pg_job.queue_name}] [#{pg_job.job_data['job_id']}] " \
+      "Error while executing job: #{e}\n" + e.backtrace.join("\n")
+    end
   end
 end
