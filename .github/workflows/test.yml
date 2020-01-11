@@ -46,5 +46,5 @@ jobs:
         bundle install --jobs 4 --retry 3
     - name: Run tests
       env:
-        DATABASE_URL: postgresql://postgres:postgres@postgres:${{ job.services.postgres.ports[5432] }}/postgres
+        DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
       run: bundle exec rake
