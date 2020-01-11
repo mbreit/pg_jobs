@@ -41,6 +41,15 @@ jobs:
       uses: actions/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
+    - name: Setup codeclimate
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.cc_test_reporter_id }}
+        GIT_COMMIT_SHA: ${{ github.sha }}
+        GIT_BRANCH: ${{ github.ref }}
+      run: |
+        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        chmod +x ./cc-test-reporter
+        ./cc-test-reporter before-build
     - name: Install dependencies
       run: |
         sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -y install libpq-dev
@@ -51,3 +60,13 @@ jobs:
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
       run: bundle exec rake
+    - name: Codeclimate after-build
+      if: always()
+      continue-on-error: true
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.cc_test_reporter_id }}
+        GIT_COMMIT_SHA: ${{ github.sha }}
+        GIT_BRANCH: ${{ github.ref }}
+        JOB_STATUS: ${{ job.status }}
+      run: |
+        ./cc-test-reporter after-build --exit-code $(if [ "$JOB_STATUS" == "Success" ]; then echo 0; else echo 1; fi)
