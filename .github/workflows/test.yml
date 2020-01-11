@@ -1,0 +1,50 @@
+name: Test
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ["2.4.x", "2.5.x"]
+        rails-version: ["5.1", "5.2"]
+        exclude:
+          - ruby-version: 2.4.x
+            rails-version: 5.2
+          - ruby-version: 2.5.x
+            rails-version: 5.1
+    env:
+      RAILS_VERSION: ${{ matrix.rails-version }}
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432/tcp
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/cache@v1
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ matrix.ruby-version }}-${{ matrix.rails-version }}
+        restore-keys: |
+          ${{ runner.os }}-gem-${{ matrix.ruby-version }}
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+    - name: Install dependencies
+      run: |
+        sudo apt install libpq-dev
+        gem install bundler -v "< 2"
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+    - name: Run tests
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@postgres:${{ job.services.postgres.ports[5432] }}/postgres
+      run: bundle exec rake
