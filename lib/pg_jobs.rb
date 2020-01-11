@@ -25,7 +25,7 @@ module PgJobs
   mattr_writer :logger
 
   def self.logger
-    @@logger ||= Rails.logger
+    @@logger ||= ActiveJob::Base.logger
   end
 
   # Run a worker process for a given queue name.

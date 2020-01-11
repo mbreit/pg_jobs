@@ -63,7 +63,7 @@ PgJobs.logger = Logger.new(STDOUT)
 PgJobs.logger.level = :debug
 ```
 
-It will use `Rails.logger` by default.
+It will use `ActiveJob::Base.logger` by default.
 
 Note: This does not change the logging behaviour of your jobs,
 only the log statements of pg_jobs itself.
