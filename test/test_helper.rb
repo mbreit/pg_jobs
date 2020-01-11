@@ -21,7 +21,8 @@ require 'rails/test_unit/reporter'
 Minitest.backtrace_filter = Minitest::BacktraceFilter.new
 
 # Configure ActiveRecord from test/database.yml
-ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
+database_url = ENV.fetch('DATABASE_URL', 'postgresql:///pg_jobs_test')
+ActiveRecord::Base.configurations = { 'test' => { 'url' => database_url } }
 
 # Set up logging
 Rails.logger ||= Logger.new('test.log')
