@@ -8,10 +8,12 @@ jobs:
     strategy:
       matrix:
         ruby-version: ["2.4.x", "2.5.x"]
-        rails-version: ["5.1", "5.2"]
+        rails-version: ["5.1", "5.2", "6.0"]
         exclude:
           - ruby-version: 2.4.x
             rails-version: 5.2
+          - ruby-version: 2.4.x
+            rails-version: "6.0"
           - ruby-version: 2.5.x
             rails-version: 5.1
       fail-fast: false
