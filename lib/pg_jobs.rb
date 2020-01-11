@@ -51,7 +51,8 @@ module PgJobs
         raise SignalException, signal unless job_running
 
         # Put this message to STDERR because the logger cannot be used in a trap context
-        STDERR.puts "Received signal #{signal}, waiting for current job to finish"
+        warn "[pg_jobs] [#{queue_name}] PID #{Process.pid} " \
+             "received signal #{signal}, waiting for current job to finish"
         exit_signal = true
       end
     end
