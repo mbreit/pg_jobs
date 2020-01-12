@@ -14,4 +14,4 @@ gemspec
 # gem 'byebug', group: [:development, :test]
 
 gem 'pg', '~> 0.18.4'
-gem 'rails', ENV.fetch('RAILS_VERSION', '5.1')
+gem 'rails', ENV.fetch('RAILS_VERSION', '6.0')
