@@ -1,0 +1,72 @@
+name: Test
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ["2.4.x", "2.5.x"]
+        rails-version: ["5.1", "5.2", "6.0"]
+        exclude:
+          - ruby-version: 2.4.x
+            rails-version: 5.2
+          - ruby-version: 2.4.x
+            rails-version: "6.0"
+          - ruby-version: 2.5.x
+            rails-version: 5.1
+      fail-fast: false
+    env:
+      RAILS_VERSION: ${{ matrix.rails-version }}
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432/tcp
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions/cache@v1
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ matrix.ruby-version }}-${{ matrix.rails-version }}
+        restore-keys: |
+          ${{ runner.os }}-gem-${{ matrix.ruby-version }}
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+    - name: Setup codeclimate
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.cc_test_reporter_id }}
+        GIT_COMMIT_SHA: ${{ github.sha }}
+        GIT_BRANCH: ${{ github.ref }}
+      run: |
+        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        chmod +x ./cc-test-reporter
+        ./cc-test-reporter before-build
+    - name: Install dependencies
+      run: |
+        sudo DEBIAN_FRONTEND=noninteractive apt-get -qq -y install libpq-dev
+        gem install bundler -v "< 2"
+        bundle config path vendor/bundle
+        bundle install --jobs 4 --retry 3
+    - name: Run tests
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres
+      run: bundle exec rake
+    - name: Codeclimate after-build
+      if: always()
+      continue-on-error: true
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.cc_test_reporter_id }}
+        GIT_COMMIT_SHA: ${{ github.sha }}
+        GIT_BRANCH: ${{ github.ref }}
+        JOB_STATUS: ${{ job.status }}
+      run: |
+        ./cc-test-reporter after-build --exit-code $(if [ "$JOB_STATUS" == "Success" ]; then echo 0; else echo 1; fi)

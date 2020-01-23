@@ -21,7 +21,8 @@ namespace :db do
     require 'zlib'
     require 'active_record'
 
-    ActiveRecord::Base.configurations = YAML.load_file('test/database.yml')
+    database_url = ENV.fetch('DATABASE_URL', 'postgresql:///pg_jobs_test')
+    ActiveRecord::Base.configurations = { 'test' => { 'url' => database_url } }
     ActiveRecord::Tasks::DatabaseTasks.migrations_paths = [File.expand_path('db/migrate', __dir__)]
   end
 
