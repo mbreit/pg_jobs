@@ -54,6 +54,20 @@ ActionMailer to use the `default` queue:
 config.action_mailer.deliver_later_queue_name = 'default'
 ```
 
+## Configuration
+
+You can set the logger for pg_jobs with `PgJobs.logger=`:
+
+```ruby
+PgJobs.logger = Logger.new(STDOUT)
+PgJobs.logger.level = :debug
+```
+
+It will use `ActiveJob::Base.logger` by default.
+
+Note: This does not change the logging behaviour of your jobs,
+only the log statements of pg_jobs itself.
+
 ## Usage
 
 Just schedule your work with Active Job, then run one or multiple

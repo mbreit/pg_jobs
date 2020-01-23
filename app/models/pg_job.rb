@@ -43,7 +43,7 @@ class PgJob < ActiveRecord::Base
   #
   # @param queue_name [String] The name of the queue to work on
   # @param timeout [integer] Interval to check for due jobs
-  def self.yield_jobs(queue_name, timeout, &block)
+  def self.yield_jobs(queue_name, timeout, logger, &block)
     connection.execute "LISTEN pg_jobs_#{queue_name}"
     loop do
       # Consume all pending NOTIFY events
